@@ -19,7 +19,7 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build-env /app/out .
-EXPOSE 80
+#Default port in .net8 is changed from 80 to 8080 to get requests to container
 
 #when we run an image this will be kicked off
 ENTRYPOINT ["dotnet", "PlatformService.dll"]
