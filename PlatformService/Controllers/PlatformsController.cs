@@ -42,5 +42,18 @@ namespace PlatformService.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        public ActionResult<PlatformReadDTO> CreatePlatform(PlatformCreateDTO platformCreateDTO)
+        {
+            var platformModel = _mapper.Map<Platform>(platformCreateDTO);
+            _repository.CreatePlatform(platformModel);
+            _repository.SaveChanges();
+
+            //whenever we create a resource return a 201 with a uri to that resource
+            var platformReadDTO = _mapper.Map<PlatformReadDTO>(platformModel);
+            return CreatedAtRoute(nameof(GetPlatformById),new {Id = platformReadDTO.Id},platformReadDTO);
+
+        }
+
     }
 }
