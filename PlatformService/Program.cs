@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using PlatformService.Data;
+
 namespace PlatformService
 {
     public class Program
@@ -9,6 +12,9 @@ namespace PlatformService
 
             // Add services to the container.
 
+            builder.Services.AddDbContext<AppDbContext>(opt =>
+                opt.UseInMemoryDatabase("InMem")
+            );
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
