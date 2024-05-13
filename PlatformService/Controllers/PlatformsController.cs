@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PlatformService.Data;
 using PlatformService.DTOs;
 using PlatformService.Models;
+using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService.Controllers
 {
@@ -12,11 +13,16 @@ namespace PlatformService.Controllers
     {
         private readonly IPlatformRepo _repository;
         private readonly IMapper _mapper;
+        private readonly ICommandDataClient _commandDataClient;
 
-        public PlatformsController(IPlatformRepo repository, IMapper mapper)
+        public PlatformsController(
+            IPlatformRepo repository,
+            IMapper mapper,
+            ICommandDataClient commandDataClient)
         {
             _repository = repository;
             _mapper = mapper;
+            _commandDataClient = commandDataClient;
         }
 
         [HttpGet]
@@ -43,7 +49,7 @@ namespace PlatformService.Controllers
         }
 
         [HttpPost]
-        public ActionResult<PlatformReadDTO> CreatePlatform(PlatformCreateDTO platformCreateDTO)
+        public async Task<ActionResult<PlatformReadDTO>> CreatePlatform(PlatformCreateDTO platformCreateDTO)
         {
             var platformModel = _mapper.Map<Platform>(platformCreateDTO);
             _repository.CreatePlatform(platformModel);
@@ -51,6 +57,18 @@ namespace PlatformService.Controllers
 
             //whenever we create a resource return a 201 with a uri to that resource
             var platformReadDTO = _mapper.Map<PlatformReadDTO>(platformModel);
+
+            //inform command service about creation of new Platform in PlatformService
+            try
+            {
+                await _commandDataClient.SendPlatformToCommand(platformReadDTO);
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"--> Could not send synchronously: {ex.Message}");
+            }
+
             return CreatedAtRoute(nameof(GetPlatformById),new {Id = platformReadDTO.Id},platformReadDTO);
 
         }
