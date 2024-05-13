@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: platform-depl
+  name: commands-depl
 spec: 
   replicas: 1
   selector:
     matchLabels:
-      app: platformservice
+      app: commandservice
   template:
     metadata:
       labels:
-        app: platformservice
+        app: commandservice
     spec:
       containers:
-        - name: platformservice
-          image: guptaharsh686/platformservice:latest
+        - name: commandservice
+          image: guptaharsh686/commandservice:latest
 # --- is used to seperate the deployment from cluster ip config
 ---
 #Creating a clusterip service used to establish communication between pods
@@ -23,13 +23,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: platforms-clusterip-srv
+  name: commands-clusterip-srv
 spec:
   type: ClusterIP
   selector: 
-    app: platformservice
+    app: commandservice
   ports: 
-  - name: platformservice
+  - name: commandservice
     protocol: TCP
     port: 80
     targetPort: 8080
