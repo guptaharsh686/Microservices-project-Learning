@@ -7,3 +7,6 @@
 /PlatformService/obj
 /PlatformService/bin
 /PlatformService/.vs/ProjectEvaluation
+/CommandsService/.vs/CommandsService
+/CommandsService/bin/Debug/net8.0
+/CommandsService/obj
