@@ -12,10 +12,19 @@ namespace PlatformService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
-            builder.Services.AddDbContext<AppDbContext>(opt =>
-                opt.UseInMemoryDatabase("InMem")
-            );
+            if(builder.Environment.IsProduction())
+            {
+                Console.WriteLine("--> Using SQL Server DB");
+                builder.Services.AddDbContext<AppDbContext>(opt =>
+                    opt.UseSqlServer(builder.Configuration.GetConnectionString("PlatformConn")));
+            }
+            else
+            {
+                Console.WriteLine("--> Using InMem DB");
+                builder.Services.AddDbContext<AppDbContext>(opt =>
+                    opt.UseInMemoryDatabase("InMem")
+                );
+            }
             builder.Services.AddScoped<IPlatformRepo,PlatformRepo>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             //Managed by builtin http client factory
