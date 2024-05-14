@@ -11,3 +11,4 @@
 /CommandsService/bin/Debug/net8.0
 /CommandsService/obj
 *.tmp
+/CommandsService/.vs/ProjectEvaluation
