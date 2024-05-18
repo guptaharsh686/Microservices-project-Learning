@@ -35,7 +35,7 @@ namespace CommandsService.Controllers
 
 
         [HttpGet("{commandId}", Name = "GetCommandForPlatform")]
-        public ActionResult<CommandReadDTO> GetCommandForPlatform([FromRoute] int platformID, [FromRoute] int commandId)
+        public ActionResult<CommandReadDTO> GetCommandForPlatform(int platformID,int commandId)
         {
             Console.WriteLine($"--> GetCommandForPlatform platformId = {platformID}, commandId = {commandId}");
             if(!_repository.PlatformExists(platformID))
@@ -71,7 +71,7 @@ namespace CommandsService.Controllers
 
             return CreatedAtRoute(
                 nameof(GetCommandForPlatform),
-                new { PlatformID = platformID, commandID = commandReadDTO.Id, commandReadDTO });
+                new { PlatformID = platformID, commandID = commandReadDTO.Id }, commandReadDTO);
         }
     }
 }
