@@ -1,5 +1,7 @@
 ﻿using PlatformService.DTOs;
 using RabbitMQ.Client;
+using System.Text;
+using System.Text.Json;
 
 namespace PlatformService.AsyncDataServices
 {
@@ -37,13 +39,47 @@ namespace PlatformService.AsyncDataServices
 
         public void PublishNewPlatform(PlatformPublishedDTO platformPublishedDTO)
         {
-            throw new NotImplementedException();
+            var message = JsonSerializer.Serialize(platformPublishedDTO);
+
+            if(_connection.IsOpen)
+            {
+                Console.WriteLine("--> RabbitMQ connection is open and sending message");
+                SendMessage(message);
+            }
+            else
+            {
+                Console.WriteLine("--> RabbitMQ connection is NOT open and NOT sending any message");
+            }
         }
 
 
         private void RabbitMQ_ConnectionShutdown(object sender, EventArgs e)
         {
             Console.WriteLine("--> RabbitMQ connection Shutdown");
+        }
+
+        private void SendMessage(string message)
+        {
+            var body = Encoding.UTF8.GetBytes(message);
+
+            _channel.BasicPublish(
+                    exchange: "trigger",
+                    routingKey: "",
+                    basicProperties: null,
+                    body: body
+                    );
+            Console.WriteLine($"We have sent {message}");
+        }
+
+        public void Dispose()
+        {
+            Console.WriteLine("Message bus Disposed");
+
+            if(_channel.IsOpen)
+            {
+                _channel.Close();
+                _connection.Close();
+            }
         }
     }
 }
