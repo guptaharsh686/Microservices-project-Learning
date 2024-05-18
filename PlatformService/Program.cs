@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PlatformService.AsyncDataServices;
 using PlatformService.Data;
+using PlatformService.SyncDataServices.Grpc;
 using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService
@@ -28,6 +29,7 @@ namespace PlatformService
             }
             builder.Services.AddScoped<IPlatformRepo,PlatformRepo>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddGrpc();
             //Managed by builtin http client factory
             builder.Services.AddHttpClient<ICommandDataClient,HttpCommandDataClient>();
 
@@ -51,8 +53,18 @@ namespace PlatformService
 
             app.UseAuthorization();
 
-
             app.MapControllers();
+            app.MapGrpcService<GrpcPlatformService>();
+
+            app.MapGet("/protos/platforms.proto", async context =>
+            {
+                await context.Response.WriteAsync(File.ReadAllText("Protos/platforms.proto"));
+            });
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllers();
+            //    endpoints.MapGrpcService<GrpcPlatformService>();
+            //});
 
             PrepDb.PrepPopulation(app,builder.Environment.IsProduction());
 
