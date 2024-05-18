@@ -45,6 +45,8 @@ namespace CommandsService
 
             app.MapControllers();
 
+            PrepDb.PrepPopulation(app);
+
             app.Run();
         }
     }
