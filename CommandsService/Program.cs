@@ -1,5 +1,6 @@
 
 using CommandsService.Data;
+using CommandsService.EventProcessing;
 using Microsoft.EntityFrameworkCore;
 
 namespace CommandsService
@@ -18,6 +19,7 @@ namespace CommandsService
             {
                 opt.UseInMemoryDatabase("InMem");
             });
+            builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
             builder.Services.AddScoped<ICommandRepo, CommandRepo>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
