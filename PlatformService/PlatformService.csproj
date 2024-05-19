@@ -25,7 +25,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<protobuf Include="Protos\platforms.proto" GrpcServices="Server" />
+		<protobuf Include="Protos\Platforms.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 </Project>
